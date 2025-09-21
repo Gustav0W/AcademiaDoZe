@@ -1,5 +1,6 @@
 ﻿using AcademiaDoZe.Application.DependencyInjection;
 using AcademiaDoZe.Application.Enums;
+using AcademiaDoZe.Presentation.AppMaui.Message;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AcademiaDoZe.Presentation.AppMaui.Configuration;
