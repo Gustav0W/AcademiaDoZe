@@ -1,5 +1,6 @@
 ﻿using AcademiaDoZe.Application.DependencyInjection;
 using AcademiaDoZe.Application.Enums;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace AcademiaDoZe.Presentation.AppMaui.Configuration;
 
@@ -7,26 +8,40 @@ public static class ConfigurationHelper
 {
     public static void ConfigureServices(IServiceCollection services)
     {
-        // dados conexão
+        var (connectionString, databaseType) = ReadDbPreferences();
 
-        const string dbServer = "GUSTAVOWALTNOTE\\SQLEXPRESS";
-        const string dbDatabase = "AcademiaDoZe_TESTES";
-        const string dbTrustedConnection = "True";
-        //const string dbPassword = "abcBolinhas12345";
-        const string dbComplemento = "TrustServerCertificate=True;Encrypt=True;";
-        // se for necessário indicar a porta, incluir junto em dbComplemento
-
-        // Configurações de conexão
-        const string connectionString = $"Server={dbServer};Database={dbDatabase};Trusted_Connection={dbTrustedConnection};{dbComplemento}";
-
-        const EAppDatabaseType databaseType = EAppDatabaseType.SqlServer;
-        // Configura a fábrica de repositórios com a string de conexão e tipo de banco
-        services.AddSingleton(new RepositoryConfig
-        {
-            ConnectionString = connectionString,
-            DatabaseType = databaseType
-        });
-        // configura os serviços da camada de aplicação
+        var repoConfig = new RepositoryConfig { ConnectionString = connectionString, DatabaseType = databaseType };
+        
+        services.AddSingleton(repoConfig);
         services.AddApplicationServices();
+
+        WeakReferenceMessenger.Default.Register<RepositoryConfig, BancoPreferencesUpdatedMessage>(
+            recipient: repoConfig, handler: static(recipient, message) =>
+            {
+                var (connectionString, databaseType) = ReadDbPreferences();
+                recipient.ConnectionString = connectionString;
+                recipient.DatabaseType = databaseType;
+            }
+            );
+    }
+
+    private static (string ConnectionString, EAppDatabaseType DatabaseType) ReadDbPreferences()
+    {
+        string dbServer = Preferences.Get("Servidor", "GUSTAVOWALTNOTE//SQLEXPRESS");
+        string dbDatabase = Preferences.Get("Banco", "AcademiaDoZe_TESTES");
+        //string dbUser = Preferences.Get("Usuario", "sa");
+        //string dbSenha = Preferences.Get("Senha", "abcBolinhas12345");
+        string dbComplemento = Preferences.Get("Complemento", "TrustServerCertificate=True;Encrypt=True;");
+
+        string connectionString = $"Server={dbServer};Database={dbDatabase};Trusted_Connection=True;{dbComplemento}";
+
+        var dbType = Preferences.Get("DatabaseType", EAppDatabaseType.SqlServer.ToString()) switch
+        {
+            "SqlServer" => EAppDatabaseType.SqlServer,
+            "MySql" => EAppDatabaseType.MySql,
+            _ => EAppDatabaseType.SqlServer
+        };
+
+        return (connectionString, dbType);
     }
 }
