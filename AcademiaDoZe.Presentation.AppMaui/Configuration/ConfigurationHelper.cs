@@ -28,7 +28,7 @@ public static class ConfigurationHelper
 
     private static (string ConnectionString, EAppDatabaseType DatabaseType) ReadDbPreferences()
     {
-        string dbServer = Preferences.Get("Servidor", "GUSTAVOWALTNOTE//SQLEXPRESS");
+        string dbServer = Preferences.Get("Servidor", "GUSTAVOWALTNOTE\\SQLEXPRESS");
         string dbDatabase = Preferences.Get("Banco", "AcademiaDoZe_TESTES");
         //string dbUser = Preferences.Get("Usuario", "sa");
         //string dbSenha = Preferences.Get("Senha", "abcBolinhas12345");
