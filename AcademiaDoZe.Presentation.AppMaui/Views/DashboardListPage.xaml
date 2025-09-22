@@ -31,7 +31,7 @@ Title="{Binding Title}">
                         <TapGestureRecognizer Command="{Binding NavigateToLogradourosCommand}"/>
                     </Border.GestureRecognizers>
                     <StackLayout Spacing="10">
-                        <Label FontFamily="MaterialIcons" Text="&#xf075;" Style="{StaticResource SubHeadline}" HorizontalTextAlignment="Center" />         
+                        <Label FontFamily="MaterialIcons" Text="&#xe58a;" Style="{StaticResource SubHeadline}" HorizontalTextAlignment="Center" />         
                         <Label Text="{Binding TotalLogradouros}" Style="{StaticResource SubHeadline}"/>
                         <Label Text="Logradouros" HorizontalTextAlignment="Center"/>
                     </StackLayout>
@@ -57,7 +57,7 @@ Title="{Binding Title}">
                         <TapGestureRecognizer Command="{Binding NavigateToColaboradoresCommand}"/>
                     </Border.GestureRecognizers>
                     <StackLayout Spacing="10">
-                        <Label FontFamily="MaterialIcons" Text="&#xf5a3;" Style="{StaticResource SubHeadline}" HorizontalTextAlignment="Center" />
+                        <Label FontFamily="MaterialIcons" Text="&#xea3d;" Style="{StaticResource SubHeadline}" HorizontalTextAlignment="Center" />
                         <Label Text="{Binding TotalColaboradores}" Style="{StaticResource SubHeadline}"/>
                         <Label Text="Colaboradores" HorizontalTextAlignment="Center"/>
                     </StackLayout>
