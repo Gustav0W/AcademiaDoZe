@@ -14,8 +14,9 @@ public partial class AppShell : Shell
 
     // como páginas de detalhe, edição ou cadastro.
     private static void RegisterRoutes()
-
     {
+        Routing.RegisterRoute("colaborador", typeof(ColaboradorPage));
+
         Routing.RegisterRoute("logradouro", typeof(LogradouroPage));
     }
 }

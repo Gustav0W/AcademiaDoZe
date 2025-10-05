@@ -174,4 +174,39 @@ public partial class ColaboradorListViewModel : BaseViewModel
             IsRefreshing = false;
         }
     }
+    [RelayCommand]
+    private async Task DeleteColaboradorAsync(ColaboradorDTO colaborador)
+    {
+        if (colaborador == null)
+            return;
+        bool confirm = await Shell.Current.DisplayAlert(
+        "Confirmar Exclusão",
+
+        $"Deseja realmente excluir o colaborador {colaborador.Nome}?",
+        "Sim", "Não");
+        if (!confirm)
+            return;
+        try
+        {
+            IsBusy = true;
+            bool success = await _colaboradorService.RemoverAsync(colaborador.Id);
+            if (success)
+            {
+                Colaboradores.Remove(colaborador);
+                await Shell.Current.DisplayAlert("Sucesso", "Colaborador excluído com sucesso!", "OK");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Erro", "Não foi possível excluir o colaborador.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Erro", $"Erro ao excluir colaborador: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 }
