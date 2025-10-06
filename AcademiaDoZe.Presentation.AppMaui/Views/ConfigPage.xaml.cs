@@ -24,10 +24,10 @@ public partial class ConfigPage : ContentPage
             DatabaseTypePicker.Items.Add(tipo.ToString());
         }
         // Carregar os dados existentes, ou valores padrão, ao abrir a página
-        ServidorEntry.Text = Preferences.Get("Servidor", "172.24.32.1");
-        BancoEntry.Text = Preferences.Get("Banco", "db_academia_do_ze");
-        UsuarioEntry.Text = Preferences.Get("Usuario", "sa");
-        SenhaEntry.Text = Preferences.Get("Senha", "abcBolinhas12345");
+        ServidorEntry.Text = Preferences.Get("Servidor", "GUSTAVOWALTNOTE\\SQLEXPRESS");
+        BancoEntry.Text = Preferences.Get("Banco", "AcademiaDoZe_TESTES");
+        //UsuarioEntry.Text = Preferences.Get("Usuario", "sa");
+        //SenhaEntry.Text = Preferences.Get("Senha", "abcBolinhas12345");
         ComplementoEntry.Text = Preferences.Get("Complemento", "TrustServerCertificate=True;Encrypt=True;");
         DatabaseTypePicker.SelectedItem = Preferences.Get("DatabaseType", EAppDatabaseType.SqlServer.ToString());
     }
@@ -36,8 +36,8 @@ public partial class ConfigPage : ContentPage
         Preferences.Set("Servidor", ServidorEntry.Text);
         Preferences.Set("Banco", BancoEntry.Text);
         Preferences.Set("Usuario", UsuarioEntry.Text);
-        Preferences.Set("Senha", SenhaEntry.Text);
-        Preferences.Set("Complemento", ComplementoEntry.Text);
+        //Preferences.Set("Senha", SenhaEntry.Text);
+        //Preferences.Set("Complemento", ComplementoEntry.Text);
         Preferences.Set("DatabaseType", DatabaseTypePicker.SelectedItem.ToString());
         // Disparar a mensagem para recarga dinâmica
         WeakReferenceMessenger.Default.Send(new BancoPreferencesUpdatedMessage("BancoAlterado"));

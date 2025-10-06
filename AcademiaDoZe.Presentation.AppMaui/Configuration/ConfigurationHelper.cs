@@ -31,7 +31,7 @@ public static class ConfigurationHelper
         string dbServer = Preferences.Get("Servidor", "GUSTAVOWALTNOTE\\SQLEXPRESS");
         string dbDatabase = Preferences.Get("Banco", "AcademiaDoZe_TESTES");
         //string dbUser = Preferences.Get("Usuario", "sa");
-        //string dbSenha = Preferences.Get("Senha", "abcBolinhas12345");
+        //string dbSenha = Preferences.Get("Senha", "senhaforte2");
         string dbComplemento = Preferences.Get("Complemento", "TrustServerCertificate=True;Encrypt=True;");
 
         string connectionString = $"Server={dbServer};Database={dbDatabase};Trusted_Connection=True;{dbComplemento}";
