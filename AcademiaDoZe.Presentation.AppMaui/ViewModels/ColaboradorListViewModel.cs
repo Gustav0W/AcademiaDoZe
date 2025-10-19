@@ -143,7 +143,6 @@ public partial class ColaboradorListViewModel : BaseViewModel
             IsBusy = true;
 
             await MainThread.InvokeOnMainThreadAsync(() =>
-
             {
                 Colaboradores.Clear();
                 OnPropertyChanged(nameof(Colaboradores));
