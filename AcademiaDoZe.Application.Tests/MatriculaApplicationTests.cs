@@ -10,7 +10,7 @@ namespace AcademiaDoZe.Application.Tests;
 
 public class MatriculaApplicationTests
 {
-    const string connectionString = "Server=GUSTAVOWALTNOTE\\SQLEXPRESS;Database=AcademiaDoZe_TESTES;Trusted_Connection=True;TrustServerCertificate=True;";
+    const string connectionString = "Server=localhost;Database=db_academia_do_ze;User Id=sa;Password=abcBolinhas12345;TrustServerCertificate=True;";
     const EAppDatabaseType databaseType = EAppDatabaseType.SqlServer;
 
     [Fact(Timeout = 60000)]
@@ -31,7 +31,7 @@ public class MatriculaApplicationTests
         try
         {
             // ARRANGE - Criar um aluno temporário para o teste
-            var logradouro = await logradouroService.ObterPorIdAsync(10);
+            var logradouro = await logradouroService.ObterPorIdAsync(1);
             Assert.NotNull(logradouro);
 
             var alunoDto = new AlunoDTO

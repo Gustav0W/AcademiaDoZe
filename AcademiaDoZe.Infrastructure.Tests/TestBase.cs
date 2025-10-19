@@ -14,7 +14,7 @@ namespace AcademiaDoZe.Infrastructure.Tests
         }
         private (string ConnectionString, DatabaseType DatabaseType) CreateSqlServerConfig()
         {
-            var connectionString = "Server=GUSTAVOWALTNOTE\\SQLEXPRESS;Database=AcademiaDoZe_TESTES;Trusted_Connection=True;TrustServerCertificate=True;";
+            var connectionString = "Server=localhost;Database=db_academia_do_ze;User I=sa;Password=abcBolinhas12345;TrustServerCertificate=True;";
 
             return (connectionString, DatabaseType.SqlServer);
 

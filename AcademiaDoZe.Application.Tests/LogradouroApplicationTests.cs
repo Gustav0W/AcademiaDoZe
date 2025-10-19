@@ -8,8 +8,13 @@ namespace AcademiaDoZe.Application.Tests;
 
 public class LogradouroApplicationTests
 {
-    const string connectionString = "Server=GUSTAVOWALTNOTE\\SQLEXPRESS;Database=AcademiaDoZe_TESTES;Trusted_Connection=True;TrustServerCertificate=True;";
+    const string connectionString = "Server=localhost;Database=db_academia_do_ze;User Id=sa;Password=abcBolinhas12345;TrustServerCertificate=True;";
+
+
+    // $"Server={dbServer};Database={dbDatabase};User Id={dbUser};Password={dbSenha};{dbComplemento}";
+
     const EAppDatabaseType databaseType = EAppDatabaseType.SqlServer;
+
     [Fact(Timeout = 60000)]
     public async Task LogradouroService_Integracao_Adicionar_Obter_Atualizar_Remover()
     {

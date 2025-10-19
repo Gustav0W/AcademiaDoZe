@@ -28,13 +28,15 @@ public static class ConfigurationHelper
 
     private static (string ConnectionString, EAppDatabaseType DatabaseType) ReadDbPreferences()
     {
-        string dbServer = Preferences.Get("Servidor", "GUSTAVOWALTNOTE\\SQLEXPRESS");
-        string dbDatabase = Preferences.Get("Banco", "AcademiaDoZe_TESTES");
-        //string dbUser = Preferences.Get("Usuario", "sa");
-        //string dbSenha = Preferences.Get("Senha", "senhaforte2");
-        string dbComplemento = Preferences.Get("Complemento", "TrustServerCertificate=True;Encrypt=True;");
+        string dbServer = Preferences.Get("Servidor", "localhost");
+        string dbDatabase = Preferences.Get("Banco", "db_academia_do_ze");
+        string dbUser = Preferences.Get("Usuario", "sa");
+        string dbSenha = Preferences.Get("Senha", "abcBolinhas12345");
+        string dbComplemento = Preferences.Get("Complemento", "TrustServerCertificate=True;");
 
-        string connectionString = $"Server={dbServer};Database={dbDatabase};Trusted_Connection=True;{dbComplemento}";
+        string connectionString = $"Server={dbServer};Database={dbDatabase};User Id={dbUser};Password={dbSenha};{dbComplemento}";
+        //var connectionString = "Server=localhost;Database=db_academia_do_ze;User Id=sa;Password=abcBolinhas12345;TrustServerCertificate=True;";
+
 
         var dbType = Preferences.Get("DatabaseType", EAppDatabaseType.SqlServer.ToString()) switch
         {

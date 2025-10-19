@@ -9,7 +9,8 @@ namespace AcademiaDoZe.Application.Tests;
 public class ColaboradorApplicationTests
 {
     // Configurações de conexão
-    const string connectionString = "Server=GUSTAVOWALTNOTE\\SQLEXPRESS;Database=AcademiaDoZe_TESTES;Trusted_Connection=True;TrustServerCertificate=True;";
+    const string connectionString = "Server=localhost;Database=db_academia_do_ze;User Id=sa;Password=abcBolinhas12345;TrustServerCertificate=True;";
+
     const EAppDatabaseType databaseType = EAppDatabaseType.SqlServer;
     [Fact(Timeout = 60000)]
     public async Task ColaboradorService_Integracao_Adicionar_Obter_Atualizar_Remover()
@@ -17,17 +18,21 @@ public class ColaboradorApplicationTests
         // Arrange: DI usando repositório real (Infra)
         // Configuração dos serviços usando a classe DependencyInjection
         var services = DependencyInjection.ConfigureServices(connectionString, databaseType);
+        
         // Cria o provedor de serviços
         var provider = DependencyInjection.BuildServiceProvider(services);
+        
         // Obtém os serviços necessários via injeção de dependência
         var colaboradorService = provider.GetRequiredService<IColaboradorService>();
         var logradouroService = provider.GetRequiredService<ILogradouroService>();
+        
         // Gera um CPF único para evitar conflito
         var _cpf = GerarCpfFake();
+        
         // obter o logradouro
-        var logradouro = await logradouroService.ObterPorIdAsync(10);
+        var logradouro = await logradouroService.ObterPorIdAsync(1);
         Assert.NotNull(logradouro);
-        Assert.Equal(10, logradouro!.Id);
+        Assert.Equal(1, logradouro!.Id);
         // cria um arquivo (para facilitar, copie uma foto para dentro do diretório com os fontes do teste)
         // caminho relativo da foto
         var caminhoFoto = Path.Combine("foto_teste.png");

@@ -16,6 +16,8 @@ namespace AcademiaDoZe.Presentation.AppMaui.ViewModels
         public int TotalColaboradores { get => _totalColaboradores; set => SetProperty(ref _totalColaboradores, value); }
         private int _totalMatriculas;
         public int TotalMatriculas { get => _totalMatriculas; set => SetProperty(ref _totalMatriculas, value); }
+
+        //
         public DashboardListViewModel(ILogradouroService logradouroService, IAlunoService alunoService, IColaboradorService colaboradorService, IMatriculaService matriculaService)
         {
             _logradouroService = logradouroService;
@@ -41,7 +43,7 @@ namespace AcademiaDoZe.Presentation.AppMaui.ViewModels
                 var alunos = new List<object>();
                 try { alunos = (await alunosTask).ToList<object>(); }
                 catch (Exception ex) { await Shell.Current.DisplayAlert("Erro", $"Erro ao carregar alunos: {ex.Message}", "OK"); }
-                TotalAlunos = alunos.Count;
+                TotalAlunos =  alunos.Count;
                 var colaboradoresTask = _colaboradorService.ObterTodosAsync();
                 var colaboradores = new List<object>();
                 try { colaboradores = (await colaboradoresTask).ToList<object>(); }

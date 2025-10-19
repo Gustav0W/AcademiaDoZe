@@ -12,7 +12,7 @@ public class AlunoInfrastructureTests : TestBase
     public async Task Aluno_LogradouroPorId_CpfJaExiste_Adicionar()
     {
 
-        var logradouroId = 10;
+        var logradouroId = 1;
         var repoLogradouroObterPorId = new LogradouroRepository(ConnectionString, DatabaseType);
         Logradouro? logradouro = await repoLogradouroObterPorId.ObterPorId(logradouroId);
 
@@ -49,17 +49,18 @@ public class AlunoInfrastructureTests : TestBase
     [Fact]
     public async Task Aluno_ObterPorCpf_Atualizar()
     {
-        var _cpf = "12345678900";
+        var _cpf = "12345678901";
         Arquivo arquivo = Arquivo.Criar(new byte[] { 1, 2, 3 }, ".jpg");
         var repoAlunoObterPorCpf = new AlunoRepository(ConnectionString, DatabaseType);
         var alunoExistente = await repoAlunoObterPorCpf.ObterPorCpf(_cpf);
+        var dataNova = new DateOnly(2005, 7, 5);
         Assert.NotNull(alunoExistente);
 
         var alunoAtualizado = Aluno.Criar(
         0,
         "zé dos testes 123",
         alunoExistente.Cpf,
-        alunoExistente.DataNascimento,
+        dataNova,
         alunoExistente.Telefone,
         alunoExistente.Email,
         alunoExistente.Endereco,

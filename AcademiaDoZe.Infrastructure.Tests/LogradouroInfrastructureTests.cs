@@ -21,7 +21,7 @@ public class LogradouroInfrastructureTests : TestBase
     [Fact]
     public async Task Logradouro_ObterPorCep_Atualizar()
     {
-        var _cep = "12345678";
+        var _cep = "88500001";
         // ObterPorCep - existente para edição
 
         var repoLogradouroBuscaCep = new LogradouroRepository(ConnectionString, DatabaseType);
