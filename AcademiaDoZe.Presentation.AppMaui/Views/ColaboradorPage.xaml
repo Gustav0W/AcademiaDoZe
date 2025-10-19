@@ -29,8 +29,8 @@ Title="{Binding Title}">
                     </Grid>
                 </StackLayout>
             </Border>
+            
             <!-- Dados Pessoais -->
-
             <Border Style="{StaticResource CardBorder}" Margin="15,10">
 
                 <StackLayout Spacing="15">
@@ -49,7 +49,8 @@ Title="{Binding Title}">
                     </StackLayout>
                     <StackLayout Spacing="5">
                         <Label Text="Email"/>
-                        <Entry Text="{Binding Colaborador.Email}" Placeholder="Digite o email..." Keyboard="Email"/>
+                        <Entry x:Name="EmailEntry" Text="{Binding Colaborador.Email}" Placeholder="Digite o email..." Keyboard="Email" Unfocused="OnEmailUnfocused" />
+                        <Label x:Name="EmailErrorLabel" Text="Formato de e-mail inválido. Use nome@dominio.com" TextColor="Red" FontSize="12" IsVisible="False" />
                     </StackLayout>
                     <StackLayout Spacing="5">
                         <Label Text="Senha"/>
@@ -57,7 +58,11 @@ Title="{Binding Title}">
                     </StackLayout>
                     <StackLayout Spacing="5">
                         <Label Text="Foto"/>
-                        <Image Source="{Binding Colaborador.Foto, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" HeightRequest="120" WidthRequest="120"/>
+                        <Image Source="{Binding Colaborador.Foto, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" HeightRequest="120" WidthRequest="120">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelecionarFotoCommand}" NumberOfTapsRequired="1" />
+                            </Image.GestureRecognizers>
+                        </Image>
                         <Button Text="Selecionar Imagem" Command="{Binding SelecionarFotoCommand}" Style="{StaticResource ButtonPrimary}" >
                             <Button.ImageSource>
                                 <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe226;" />
@@ -66,8 +71,8 @@ Title="{Binding Title}">
                     </StackLayout>
                 </StackLayout>
             </Border>
+            
             <!-- Endereço -->
-
             <Border Style="{StaticResource CardBorder}" Margin="15,10">
 
                 <StackLayout Spacing="15">
@@ -105,8 +110,8 @@ Title="{Binding Title}">
                     </StackLayout>
                 </StackLayout>
             </Border>
-            <!-- Dados de Trabalho -->
 
+            <!-- Dados de Trabalho -->
             <Border Style="{StaticResource CardBorder}" Margin="15,10">
 
                 <StackLayout Spacing="15">
@@ -133,8 +138,8 @@ Title="{Binding Title}">
                     </StackLayout>
                 </StackLayout>
             </Border>
+            
             <!-- Botões de Ação -->
-
             <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="15,10">
 
                 <Button Grid.Column="0" Text="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource ButtonSecondary}" HeightRequest="50">
@@ -150,7 +155,18 @@ Title="{Binding Title}">
                     </Button.ImageSource>
                 </Button>
             </Grid>
+            
             <!-- Loading Indicator -->
+            <Label Text="Senha"/>
+            <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                <Entry x:Name="SenhaEntry" Grid.Column="0" Text="{Binding Colaborador.Senha}" Placeholder="Senha" IsPassword="True" />
+                <StackLayout Grid.Column="1" Orientation="Horizontal" VerticalOptions="Center" Spacing="6" Padding="6,0,0,0">
+                    <Switch x:Name="ShowPasswordSwitch" Toggled="OnShowPasswordToggled" VerticalOptions="Center"/>
+                    <Label Text="Mostrar" VerticalOptions="Center"/>
+                </StackLayout>
+            </Grid> 
+
+
             <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" VerticalOptions="Center" HorizontalOptions="Center"/>
 
         </StackLayout>

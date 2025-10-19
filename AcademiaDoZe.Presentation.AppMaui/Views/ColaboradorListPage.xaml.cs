@@ -5,6 +5,7 @@ namespace AcademiaDoZe.Presentation.AppMaui.Views;
 
 public partial class ColaboradorListPage : ContentPage
 {
+    private CancellationTokenSource? _searchCts;
     public ColaboradorListPage(ColaboradorListViewModel viewModel)
     {
         InitializeComponent();
@@ -45,5 +46,22 @@ public partial class ColaboradorListPage : ContentPage
         {
             await DisplayAlert("Erro", $"Erro ao excluir colaborador: {ex.Message}", "OK");
         }
+    }
+    private async void OnSearchDebounceTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        try
+        {
+            _searchCts?.Cancel();
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
+            // espera curta (300ms)
+            await Task.Delay(300, token);
+            if (token.IsCancellationRequested) return;
+            if (BindingContext is ColaboradorListViewModel vm)
+            {
+                await vm.SearchColaboradoresCommand.ExecuteAsync(null);
+            }
+        }
+        catch (TaskCanceledException) { /* ignorar */ }
     }
 }
