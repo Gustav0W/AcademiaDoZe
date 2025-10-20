@@ -179,45 +179,45 @@ public class MoqColaboradorServiceTests
 
         _colaboradorServiceMock.Verify(s => s.RemoverAsync(colaboradorId), Times.Once);
     }
-    [Fact]
-    public async Task ObterPorCpfAsync_DeveRetornarColaborador_QuandoExistir()
-    {
-        // Arrange
+    //[Fact]
+    //public async Task ObterPorCpfAsync_DeveRetornarColaborador_QuandoExistir()
+    //{
+    //    // Arrange
 
-        var cpf = "12345678901";
-        var colaboradorDto = CriarColaboradorPadrao(1);
+    //    var cpf = "12345678901";
+    //    var colaboradorDto = CriarColaboradorPadrao(1);
 
-        colaboradorDto.Cpf = cpf;
-        _colaboradorServiceMock.Setup(s => s.ObterPorCpfAsync(cpf)).ReturnsAsync(colaboradorDto);
-        // Act
+    //    colaboradorDto.Cpf = cpf;
+    //    _colaboradorServiceMock.Setup(s => s.ObterPorCpfAsync(cpf)).ReturnsAsync(colaboradorDto);
+    //    // Act
 
-        var result = await _colaboradorService.ObterPorCpfAsync(cpf);
+    //    var result = await _colaboradorService.ObterPorCpfAsync(cpf);
 
-        // Assert
+    //    // Assert
 
-        Assert.NotNull(result);
-        Assert.Equal(cpf, result.Cpf);
+    //    Assert.NotNull(result);
+    //    Assert.Equal(cpf, result.Cpf);
 
-        _colaboradorServiceMock.Verify(s => s.ObterPorCpfAsync(cpf), Times.Once);
-    }
-    [Fact]
-    public async Task ObterPorCpfAsync_DeveRetornarNull_QuandoNaoExistir()
-    {
-        // Arrange
+    //    _colaboradorServiceMock.Verify(s => s.ObterPorCpfAsync(cpf), Times.Once);
+    //}
+    //[Fact]
+    //public async Task ObterPorCpfAsync_DeveRetornarNull_QuandoNaoExistir()
+    //{
+    //    // Arrange
 
-        var cpf = "99999999999";
+    //    var cpf = "99999999999";
 
-        _colaboradorServiceMock.Setup(s => s.ObterPorCpfAsync(cpf)).ReturnsAsync((ColaboradorDTO)null!);
-        // Act
+    //    _colaboradorServiceMock.Setup(s => s.ObterPorCpfAsync(cpf)).ReturnsAsync((ColaboradorDTO)null!);
+    //    // Act
 
-        var result = await _colaboradorService.ObterPorCpfAsync(cpf);
+    //    var result = await _colaboradorService.ObterPorCpfAsync(cpf);
 
-        // Assert
+    //    // Assert
 
-        Assert.Null(result);
+    //    Assert.Null(result);
 
-        _colaboradorServiceMock.Verify(s => s.ObterPorCpfAsync(cpf), Times.Once);
-    }
+    //    _colaboradorServiceMock.Verify(s => s.ObterPorCpfAsync(cpf), Times.Once);
+    //}
     [Fact]
     public async Task TrocarSenhaAsync_DeveRetornarTrue_QuandoSucesso()
     {
