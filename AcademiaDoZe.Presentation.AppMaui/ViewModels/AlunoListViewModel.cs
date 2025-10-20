@@ -153,4 +153,60 @@ public partial class AlunoListViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    // COPIA E COLA ESTE MÉTODO PARA DENTRO DA TUA CLASSE AlunoListViewModel
+
+    [RelayCommand]
+    private async Task SearchAlunosAsync()
+    {
+        if (IsBusy)
+            return;
+
+        try
+        {
+            IsBusy = true;
+
+            Alunos.Clear();
+
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                await LoadAlunosAsync();
+                return; 
+            }
+
+            if (SelectedFilterType == "CPF")
+            {
+                var cpfNormalized = new string(SearchText.Where(char.IsDigit).ToArray());
+                var aluno = await _alunoService.ObterPorCpfAsync(cpfNormalized);
+                if (aluno != null)
+                {
+                    Alunos.Add(aluno);
+                }
+            }
+            else if (SelectedFilterType == "Id")
+            {
+                if (int.TryParse(SearchText, out int id))
+                {
+                    var aluno = await _alunoService.ObterPorIdAsync(id);
+                    if (aluno != null)
+                    {
+                        Alunos.Add(aluno);
+                    }
+                }
+            }
+
+            if (!Alunos.Any())
+            {
+                await Shell.Current.DisplayAlert("Aviso", "Nenhum aluno encontrado com o critério fornecido.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Erro", $"Erro ao buscar alunos: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 }

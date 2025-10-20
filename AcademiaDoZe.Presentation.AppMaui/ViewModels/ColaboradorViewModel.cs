@@ -107,7 +107,6 @@ public partial class ColaboradorViewModel : BaseViewModel
 
             var logradouroData = await _logradouroService.ObterPorCepAsync(Colaborador.Endereco.Cep);
             if (logradouroData == null)
-
             {
                 await Shell.Current.DisplayAlert("Erro", "O CEP informado não existe. O cadastro não pode continuar.", "OK");
                 return;
