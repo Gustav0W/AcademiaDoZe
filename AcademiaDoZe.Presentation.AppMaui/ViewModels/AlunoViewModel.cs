@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AcademiaDoZe.Presentation.AppMaui.ViewModels;
 
+[QueryProperty(nameof(AlunoId), "Id")]
 public partial class AlunoViewModel : BaseViewModel
 {
     public readonly IAlunoService _alunoService;
@@ -60,8 +61,8 @@ public partial class AlunoViewModel : BaseViewModel
         }
         else
         {
-            IsEditMode = true;
-            Title = "Novo Colaborador";
+            IsEditMode = false;
+            Title = "Novo Aluno";
         }
     }
     [RelayCommand]
@@ -90,28 +91,46 @@ public partial class AlunoViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    public async Task SaveColaboradorAsync()
+    public async Task SaveAlunoAsync()
     {
         if (IsBusy)
             return;
+
         if (!ValidateAluno(Aluno))
             return;
+
         try
         {
             IsBusy = true;
 
-            var alunoData = await _alunoService.ObterPorCpfAsync(Aluno.Cpf);
-            if (alunoData == null)
+            var logradouroData = await _logradouroService.ObterPorCepAsync(Aluno.Endereco.Cep);
+            if (logradouroData == null)
             {
-                await Shell.Current.DisplayAlert("Erro", $"Aluno com esse CPF não foi encontrado.", "OK");
+                await Shell.Current.DisplayAlert("Erro", "O CEP informado não existe. O cadastro não pode continuar.", "OK");
+                IsBusy = false;
                 return;
             }
+            Aluno.Endereco = logradouroData;
+
             if (IsEditMode)
             {
                 await _alunoService.AtualizarAsync(Aluno);
-
                 await Shell.Current.DisplayAlert("Sucesso", "Aluno atualizado com sucesso.", "OK");
             }
+            else
+            {
+                var cpfJaExiste = await _alunoService.CpfJaExisteAsync(Aluno.Cpf);
+                if (cpfJaExiste)
+                {
+                    await Shell.Current.DisplayAlert("Erro", "Este CPF já está cadastrado.", "OK");
+                    IsBusy = false;
+                    return;
+                }
+
+                await _alunoService.AdicionarAsync(Aluno);
+                await Shell.Current.DisplayAlert("Sucesso", "Aluno criado com sucesso.", "OK");
+            }
+
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
@@ -166,7 +185,7 @@ public partial class AlunoViewModel : BaseViewModel
 
             {
                 Aluno.Endereco = logradouroData;
-                OnPropertyChanged(nameof(Colaborador));
+                OnPropertyChanged(nameof(Aluno));
                 await Shell.Current.DisplayAlert("Aviso", "CEP encontrado! Endereço preenchido automaticamente.", "OK");
             }
             else

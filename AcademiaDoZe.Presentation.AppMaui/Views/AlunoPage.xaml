@@ -20,7 +20,7 @@ Title="{Binding Title}">
                 <StackLayout Spacing="5">
                     <Label Text="CPF"/>
                     <Grid ColumnDefinitions="*,Auto">
-                        <Entry Grid.Column="0" Text="{Binding Colaborador.Cpf}" Placeholder="000.000.000-00" Keyboard="Numeric" Margin="0,0,10,0"/>
+                        <Entry Grid.Column="0" Text="{Binding Aluno.Cpf}" Placeholder="000.000.000-00" Keyboard="Numeric" Margin="0,0,10,0"/>
                         <Button Grid.Column="1" Text="" Command="{Binding SearchByCpfCommand}" Style="{StaticResource ButtonPrimary}" HeightRequest="40" Padding="15,0">
                             <Button.ImageSource>
                                 <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" />
