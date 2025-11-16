@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaPage"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             xmlns:converters="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Converters"
+             x:DataType="vm:MatriculaViewModel"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <converters:FotoToImageSourceConverter x:Key="FotoToImageSourceConverter" />
+        <converters:DateOnlyToDateTimeConverter x:Key="DateOnlyConverter" />
+        <converters:EnumDisplayConverter x:Key="EnumDisplay" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout Spacing="20">
+
+            <Border Style="{StaticResource CardBorder}" Margin="15,10">
+                <StackLayout Spacing="5">
+                    <Label Text="CPF do Aluno"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Entry Grid.Column="0" Text="{Binding SearchTextAluno}" Placeholder="000.000.000-00" Keyboard="Numeric" Margin="0,0,10,0" IsEnabled="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Button Grid.Column="1" Text="" Command="{Binding SearchAlunoPorCpfCommand}" Style="{StaticResource ButtonPrimary}" HeightRequest="40" Padding="15,0" IsEnabled="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" />
+                            </Button.ImageSource>
+                        </Button>
+                    </Grid>
+
+                    <Border Margin="0,10,0,0" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray900}}" IsVisible="{Binding AlunoEncontrado}">
+                        <StackLayout>
+                            <Label Text="{Binding Matricula.AlunoMatricula.Nome, StringFormat='Nome: {0}'}" FontAttributes="Bold"/>
+                            <Label Text="{Binding Matricula.AlunoMatricula.Telefone, StringFormat='Telefone: {0}'}"/>
+                            <Label Text="{Binding Matricula.AlunoMatricula.Email, StringFormat='Email: {0}'}"/>
+                        </StackLayout>
+                    </Border>
+                </StackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorder}" Margin="15,10">
+                <StackLayout Spacing="15">
+                    <Label Text="{Binding Matricula.Id, StringFormat='Matrícula ID: {0}'}" Style="{StaticResource SubHeadline}"/>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Plano"/>
+                        <Picker ItemsSource="{Binding MatriculaPlanos}" SelectedItem="{Binding Matricula.Plano}">
+                            <Picker.ItemDisplayBinding>
+                                <Binding Converter="{StaticResource EnumDisplay}" />
+                            </Picker.ItemDisplayBinding>
+                        </Picker>
+                    </StackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <StackLayout Spacing="5" Grid.Column="0">
+                            <Label Text="Data Início"/>
+                            <DatePicker Date="{Binding Matricula.DataInicio, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay}"/>
+                        </StackLayout>
+                        <StackLayout Spacing="5" Grid.Column="1">
+                            <Label Text="Data Fim"/>
+                            <DatePicker Date="{Binding Matricula.DataFim, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay}"/>
+                        </StackLayout>
+                    </Grid>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Objetivo"/>
+                        <Entry Text="{Binding Matricula.Objetivo}" Placeholder="Ex: Perder peso, Hipertrofia..."/>
+                    </StackLayout>
+
+                </StackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorder}" Margin="15,10">
+                <StackLayout Spacing="15">
+                    <Label Text="Restrições Médicas" Style="{StaticResource SubHeadline}"/>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Restrições"/>
+                        <Picker ItemsSource="{Binding MatriculaRestricoes}" SelectedItem="{Binding Matricula.RestricoesMedicas}">
+                            <Picker.ItemDisplayBinding>
+                                <Binding Converter="{StaticResource EnumDisplay}" />
+                            </Picker.ItemDisplayBinding>
+                        </Picker>
+                    </StackLayout>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Observações"/>
+                        <Editor Text="{Binding Matricula.ObservacoesRestricoes}" Placeholder="Descreva alergias, remédios, etc." HeightRequest="100"/>
+                    </StackLayout>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Laudo Médico (Opcional)"/>
+                        <Image Source="{Binding Matricula.LaudoMedico, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" HeightRequest="120" WidthRequest="120">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelecionarLaudoCommand}" NumberOfTapsRequired="1" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Button Text="Selecionar Laudo" Command="{Binding SelecionarLaudoCommand}" Style="{StaticResource ButtonPrimary}">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe226;" />
+                            </Button.ImageSource>
+                        </Button>
+                    </StackLayout>
+                </StackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="15,10">
+                <Button Grid.Column="0" Text="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource ButtonSecondary}" HeightRequest="50">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe5c9;" />
+                    </Button.ImageSource>
+                </Button>
+                <Button Grid.Column="1" Text="Salvar" Command="{Binding SaveMatriculaCommand}" Style="{StaticResource ButtonPrimary}" HeightRequest="50">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe161;" />
+                    </Button.ImageSource>
+                </Button>
+            </Grid>
+
+            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" VerticalOptions="Center" HorizontalOptions="Center"/>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
