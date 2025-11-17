@@ -191,17 +191,39 @@ public partial class MatriculaViewModel : BaseViewModel
             return;
         }
 
+        var idade = DateTime.Today.Year - Matricula.AlunoMatricula.DataNascimento.Year;
+        if (Matricula.AlunoMatricula.DataNascimento > DateOnly.FromDateTime(DateTime.Today).AddYears(-idade)) idade--;
+
+        if (idade >= 12 && idade <= 16 && Matricula.LaudoMedico == null)
+        {
+            await Shell.Current.DisplayAlert("Validação", "Alunos entre 12 e 16 anos devem apresentar um laudo médico.", "OK");
+            return;
+        }
+        if (Matricula.RestricoesMedicas != EAppMatriculaRestricoes.None && Matricula.LaudoMedico == null)
+        {
+            await Shell.Current.DisplayAlert("Validação", "Alunos com restrições médicas devem apresentar um laudo médico.", "OK");
+            return;
+        }
+
         try
         {
             IsBusy = true;
 
-            if (IsEditMode) 
+            if (IsEditMode)
             {
                 await _matriculaService.AtualizarAsync(Matricula);
                 await Shell.Current.DisplayAlert("Sucesso", "Matrícula atualizada com sucesso.", "OK");
             }
             else 
             {
+                var matriculasAtivas = await _matriculaService.ObterAtivasAsync(Matricula.AlunoMatricula.Id);
+                if (matriculasAtivas.Any())
+                {
+                    await Shell.Current.DisplayAlert("Erro", "Este aluno já possui uma matrícula ativa. Não é possível criar outra.", "OK");
+                    IsBusy = false;
+                    return;
+                }
+
                 await _matriculaService.AdicionarAsync(Matricula);
                 await Shell.Current.DisplayAlert("Sucesso", "Matrícula criada com sucesso.", "OK");
             }

@@ -35,7 +35,7 @@
                         <Label Grid.Row="2" Grid.Column="0" Margin="0,0,0,5">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="Início: "/>
+                                    <Span Text="Inï¿½cio: "/>
                                     <Span Text="{Binding DataInicio}"/>
                                 </FormattedString>
                             </Label.FormattedText>
@@ -99,8 +99,8 @@
 
                     <CollectionView.EmptyView>
                         <StackLayout VerticalOptions="Center">
-                            <Label Text="Nenhuma matrícula encontrada" HorizontalOptions="Center" Style="{StaticResource SubHeadline}"/>
-                            <Button Text="Adicionar Primeira Matrícula" Command="{Binding AddMatriculaCommand}" Style="{StaticResource ButtonPrimary}" HeightRequest="50" Margin="0,20,0,0"/>
+                            <Label Text="Nenhuma matrï¿½cula encontrada" HorizontalOptions="Center" Style="{StaticResource SubHeadline}"/>
+                            <Button Text="Adicionar Primeira Matrï¿½cula" Command="{Binding AddMatriculaCommand}" Style="{StaticResource ButtonPrimary}" HeightRequest="50" Margin="0,20,0,0"/>
                         </StackLayout>
                     </CollectionView.EmptyView>
 

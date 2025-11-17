@@ -10,6 +10,7 @@
     <ContentPage.Resources>
         <converters:FotoToImageSourceConverter x:Key="FotoToImageSourceConverter" />
         <converters:DateOnlyToDateTimeConverter x:Key="DateOnlyConverter" />
+		<converters:InverseBoolConverter x:Key="InverseBoolConverter" />
         <converters:EnumDisplayConverter x:Key="EnumDisplay" />
     </ContentPage.Resources>
 
@@ -40,7 +41,7 @@
 
             <Border Style="{StaticResource CardBorder}" Margin="15,10">
                 <StackLayout Spacing="15">
-                    <Label Text="{Binding Matricula.Id, StringFormat='Matrícula ID: {0}'}" Style="{StaticResource SubHeadline}"/>
+                    <Label Text="{Binding Matricula.Id, StringFormat='Matrï¿½cula ID: {0}'}" Style="{StaticResource SubHeadline}"/>
 
                     <StackLayout Spacing="5">
                         <Label Text="Plano"/>
@@ -53,7 +54,7 @@
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <StackLayout Spacing="5" Grid.Column="0">
-                            <Label Text="Data Início"/>
+                            <Label Text="Data Inï¿½cio"/>
                             <DatePicker Date="{Binding Matricula.DataInicio, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay}"/>
                         </StackLayout>
                         <StackLayout Spacing="5" Grid.Column="1">
@@ -72,10 +73,10 @@
 
             <Border Style="{StaticResource CardBorder}" Margin="15,10">
                 <StackLayout Spacing="15">
-                    <Label Text="Restrições Médicas" Style="{StaticResource SubHeadline}"/>
+                    <Label Text="Restriï¿½ï¿½es Mï¿½dicas" Style="{StaticResource SubHeadline}"/>
 
                     <StackLayout Spacing="5">
-                        <Label Text="Restrições"/>
+                        <Label Text="Restriï¿½ï¿½es"/>
                         <Picker ItemsSource="{Binding MatriculaRestricoes}" SelectedItem="{Binding Matricula.RestricoesMedicas}">
                             <Picker.ItemDisplayBinding>
                                 <Binding Converter="{StaticResource EnumDisplay}" />
@@ -84,12 +85,12 @@
                     </StackLayout>
 
                     <StackLayout Spacing="5">
-                        <Label Text="Observações"/>
-                        <Editor Text="{Binding Matricula.ObservacoesRestricoes}" Placeholder="Descreva alergias, remédios, etc." HeightRequest="100"/>
+                        <Label Text="Observaï¿½ï¿½es"/>
+                        <Editor Text="{Binding Matricula.ObservacoesRestricoes}" Placeholder="Descreva alergias, remï¿½dios, etc." HeightRequest="100"/>
                     </StackLayout>
 
                     <StackLayout Spacing="5">
-                        <Label Text="Laudo Médico (Opcional)"/>
+                        <Label Text="Laudo Mï¿½dico (Opcional)"/>
                         <Image Source="{Binding Matricula.LaudoMedico, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" HeightRequest="120" WidthRequest="120">
                             <Image.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelecionarLaudoCommand}" NumberOfTapsRequired="1" />
