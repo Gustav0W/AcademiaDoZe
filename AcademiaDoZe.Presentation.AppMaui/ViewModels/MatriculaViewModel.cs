@@ -6,12 +6,19 @@ using System.Collections.ObjectModel;
 
 namespace AcademiaDoZe.Presentation.AppMaui.ViewModels;
 
+public class RestricaoItem
+{
+    public string Nome { get; set; } = string.Empty;
+    public EAppMatriculaRestricoes Valor { get; set; }
+    public bool IsSelected { get; set; }
+}
+
 [QueryProperty(nameof(MatriculaId), "Id")]
 public partial class MatriculaViewModel : BaseViewModel
 {
     public IEnumerable<EAppMatriculaPlano> MatriculaPlanos { get; } = Enum.GetValues(typeof(EAppMatriculaPlano)).Cast<EAppMatriculaPlano>();
 
-    public IEnumerable<EAppMatriculaRestricoes> MatriculaRestricoes { get; } = Enum.GetValues(typeof(EAppMatriculaRestricoes)).Cast<EAppMatriculaRestricoes>();
+    public ObservableCollection<RestricaoItem> ListaRestricoes { get; } = new();
 
     private readonly IMatriculaService _matriculaService;
     private readonly IAlunoService _alunoService;
@@ -32,7 +39,23 @@ public partial class MatriculaViewModel : BaseViewModel
 
     private MatriculaDTO _matricula = new()
     {
-        AlunoMatricula = new AlunoDTO { Nome = "Nenhum aluno selecionado", Cpf = "", DataNascimento = DateOnly.MinValue, Telefone = "", Endereco = new LogradouroDTO { Cep = "", Nome = "", Bairro = "", Cidade = "", Estado = "", Pais = "" }, Numero = "" },
+        AlunoMatricula = new AlunoDTO
+        {
+            Nome = string.Empty,
+            Cpf = string.Empty,
+            DataNascimento = DateOnly.FromDateTime(DateTime.Now),
+            Telefone = string.Empty,
+            Numero = string.Empty,
+            Endereco = new LogradouroDTO
+            {
+                Cep = string.Empty,
+                Nome = string.Empty,
+                Bairro = string.Empty,
+                Cidade = string.Empty,
+                Estado = string.Empty,
+                Pais = string.Empty
+            }
+        },
         Plano = EAppMatriculaPlano.Mensal,
         DataInicio = DateOnly.FromDateTime(DateTime.Today),
         DataFim = DateOnly.FromDateTime(DateTime.Today.AddMonths(1)),
@@ -64,11 +87,12 @@ public partial class MatriculaViewModel : BaseViewModel
     {
         _matriculaService = matriculaService;
         _alunoService = alunoService;
-        Title = "Nova Matrícula";
     }
 
     public async Task InitializeAsync()
     {
+        PreencherListaRestricoes(EAppMatriculaRestricoes.None);
+
         if (MatriculaId > 0)
         {
             IsEditMode = true;
@@ -79,26 +103,49 @@ public partial class MatriculaViewModel : BaseViewModel
         {
             IsEditMode = false;
             Title = "Nova Matrícula";
-            Matricula = new()
+            ResetarFormulario();
+        }
+    }
+
+    private void ResetarFormulario()
+    {
+        Matricula = new()
+        {
+            AlunoMatricula = new AlunoDTO { Nome = "Nenhum aluno selecionado", Cpf = "", DataNascimento = DateOnly.MinValue, Telefone = "", Endereco = new LogradouroDTO { Cep = "", Nome = "", Bairro = "", Cidade = "", Estado = "", Pais = "" }, Numero = "" },
+            Plano = EAppMatriculaPlano.Mensal,
+            DataInicio = DateOnly.FromDateTime(DateTime.Today),
+            DataFim = DateOnly.FromDateTime(DateTime.Today.AddMonths(1)),
+            Objetivo = string.Empty,
+            RestricoesMedicas = EAppMatriculaRestricoes.None,
+            ObservacoesRestricoes = string.Empty
+        };
+        AlunoEncontrado = false;
+        SearchTextAluno = string.Empty;
+        PreencherListaRestricoes(EAppMatriculaRestricoes.None);
+    }
+
+    private void PreencherListaRestricoes(EAppMatriculaRestricoes restricoesAtuais)
+    {
+        ListaRestricoes.Clear();
+        var valores = Enum.GetValues(typeof(EAppMatriculaRestricoes)).Cast<EAppMatriculaRestricoes>();
+
+        foreach (var valor in valores)
+        {
+            if (valor == EAppMatriculaRestricoes.None) continue;
+
+            ListaRestricoes.Add(new RestricaoItem
             {
-                AlunoMatricula = new AlunoDTO { Nome = "Nenhum aluno selecionado", Cpf = "", DataNascimento = DateOnly.MinValue, Telefone = "", Endereco = new LogradouroDTO { Cep = "", Nome = "", Bairro = "", Cidade = "", Estado = "", Pais = "" }, Numero = "" },
-                Plano = EAppMatriculaPlano.Mensal,
-                DataInicio = DateOnly.FromDateTime(DateTime.Today),
-                DataFim = DateOnly.FromDateTime(DateTime.Today.AddMonths(1)),
-                Objetivo = string.Empty,
-                RestricoesMedicas = EAppMatriculaRestricoes.None,
-                ObservacoesRestricoes = string.Empty
-            };
-            AlunoEncontrado = false;
-            SearchTextAluno = string.Empty;
+                Nome = valor.GetDisplayName(),
+                Valor = valor,
+                IsSelected = restricoesAtuais.HasFlag(valor)
+            });
         }
     }
 
     [RelayCommand]
     public async Task LoadMatriculaAsync()
     {
-        if (MatriculaId <= 0)
-            return;
+        if (MatriculaId <= 0) return;
         try
         {
             IsBusy = true;
@@ -107,35 +154,26 @@ public partial class MatriculaViewModel : BaseViewModel
             if (matriculaData != null)
             {
                 Matricula = matriculaData;
-                AlunoEncontrado = true; 
+                AlunoEncontrado = true;
                 SearchTextAluno = matriculaData.AlunoMatricula.Cpf;
+
+                PreencherListaRestricoes(Matricula.RestricoesMedicas);
             }
         }
         catch (Exception ex)
         {
             await Shell.Current.DisplayAlert("Erro", $"Erro ao carregar matrícula: {ex.Message}", "OK");
         }
-        finally
-        {
-            IsBusy = false;
-        }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
-    private async Task CancelAsync()
-    {
-        await Shell.Current.GoToAsync("..");
-    }
+    private async Task CancelAsync() => await Shell.Current.GoToAsync("..");
 
     [RelayCommand]
     public async Task SearchAlunoPorCpfAsync()
     {
-        if (string.IsNullOrWhiteSpace(SearchTextAluno))
-        {
-            await Shell.Current.DisplayAlert("Aviso", "Digite um CPF para buscar.", "OK");
-            return;
-        }
-
+        if (string.IsNullOrWhiteSpace(SearchTextAluno)) return;
         if (IsBusy) return;
 
         try
@@ -149,95 +187,54 @@ public partial class MatriculaViewModel : BaseViewModel
                 Matricula.AlunoMatricula = alunoEncontrado;
                 OnPropertyChanged(nameof(Matricula));
                 AlunoEncontrado = true;
-                await Shell.Current.DisplayAlert("Sucesso", $"Aluno {alunoEncontrado.Nome} selecionado.", "OK");
             }
             else
             {
-                Matricula.AlunoMatricula = new AlunoDTO { Nome = "Aluno não encontrado", Cpf = "", DataNascimento = DateOnly.MinValue, Telefone = "", Endereco = new LogradouroDTO { Cep = "", Nome = "", Bairro = "", Cidade = "", Estado = "", Pais = "" }, Numero = "" };
-                OnPropertyChanged(nameof(Matricula));
                 AlunoEncontrado = false;
                 await Shell.Current.DisplayAlert("Aviso", "Nenhum aluno encontrado com este CPF.", "OK");
             }
         }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Erro", $"Erro ao buscar aluno: {ex.Message}", "OK");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        catch (Exception ex) { await Shell.Current.DisplayAlert("Erro", ex.Message, "OK"); }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
     public async Task SaveMatriculaAsync()
     {
-        if (IsBusy)
-            return;
+        if (IsBusy) return;
+
+        EAppMatriculaRestricoes restricoesFinais = EAppMatriculaRestricoes.None;
+        foreach (var item in ListaRestricoes)
+        {
+            if (item.IsSelected)
+            {
+                restricoesFinais |= item.Valor;
+            }
+        }
+        Matricula.RestricoesMedicas = restricoesFinais;
 
         if (!AlunoEncontrado || Matricula.AlunoMatricula.Id == 0)
         {
-            await Shell.Current.DisplayAlert("Validação", "Você precisa selecionar um aluno válido para criar a matrícula.", "OK");
-            return;
-        }
-        if (string.IsNullOrWhiteSpace(Matricula.Objetivo))
-        {
-            await Shell.Current.DisplayAlert("Validação", "O campo Objetivo é obrigatório.", "OK");
-            return;
-        }
-        if (Matricula.DataFim <= Matricula.DataInicio)
-        {
-            await Shell.Current.DisplayAlert("Validação", "A Data Fim deve ser maior que a Data Início.", "OK");
-            return;
-        }
-
-        var idade = DateTime.Today.Year - Matricula.AlunoMatricula.DataNascimento.Year;
-        if (Matricula.AlunoMatricula.DataNascimento > DateOnly.FromDateTime(DateTime.Today).AddYears(-idade)) idade--;
-
-        if (idade >= 12 && idade <= 16 && Matricula.LaudoMedico == null)
-        {
-            await Shell.Current.DisplayAlert("Validação", "Alunos entre 12 e 16 anos devem apresentar um laudo médico.", "OK");
-            return;
-        }
-        if (Matricula.RestricoesMedicas != EAppMatriculaRestricoes.None && Matricula.LaudoMedico == null)
-        {
-            await Shell.Current.DisplayAlert("Validação", "Alunos com restrições médicas devem apresentar um laudo médico.", "OK");
-            return;
+            await Shell.Current.DisplayAlert("Validação", "Selecione um aluno.", "OK"); return;
         }
 
         try
         {
             IsBusy = true;
-
             if (IsEditMode)
             {
                 await _matriculaService.AtualizarAsync(Matricula);
-                await Shell.Current.DisplayAlert("Sucesso", "Matrícula atualizada com sucesso.", "OK");
+                await Shell.Current.DisplayAlert("Sucesso", "Atualizado!", "OK");
             }
-            else 
+            else
             {
-                var matriculasAtivas = await _matriculaService.ObterAtivasAsync(Matricula.AlunoMatricula.Id);
-                if (matriculasAtivas.Any())
-                {
-                    await Shell.Current.DisplayAlert("Erro", "Este aluno já possui uma matrícula ativa. Não é possível criar outra.", "OK");
-                    IsBusy = false;
-                    return;
-                }
-
                 await _matriculaService.AdicionarAsync(Matricula);
-                await Shell.Current.DisplayAlert("Sucesso", "Matrícula criada com sucesso.", "OK");
+                await Shell.Current.DisplayAlert("Sucesso", "Criado!", "OK");
             }
-
             await Shell.Current.GoToAsync("..");
         }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Erro", $"Erro ao salvar matrícula: {ex.Message}", "OK");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        catch (Exception ex) { await Shell.Current.DisplayAlert("Erro", ex.Message, "OK"); }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
@@ -245,28 +242,13 @@ public partial class MatriculaViewModel : BaseViewModel
     {
         try
         {
-            string escolha = await Shell.Current.DisplayActionSheet("Origem da Imagem", "Cancelar", null, "Galeria", "Câmera");
+            string escolha = await Shell.Current.DisplayActionSheet("Origem", "Cancelar", null, "Galeria", "Câmera");
             FileResult? result = null;
             if (escolha == "Galeria")
-            {
-                result = await FilePicker.Default.PickAsync(new PickOptions
-                {
-                    PickerTitle = "Selecione um Laudo (Imagem/PDF)",
-                    FileTypes = FilePickerFileType.Images
-                });
-            }
-            else if (escolha == "Câmera")
-            {
-                if (MediaPicker.Default.IsCaptureSupported)
-                {
-                    result = await MediaPicker.Default.CapturePhotoAsync();
-                }
-                else
-                {
-                    await Shell.Current.DisplayAlert("Erro", "Captura de foto não suportada.", "OK");
-                    return;
-                }
-            }
+                result = await FilePicker.Default.PickAsync(new PickOptions { FileTypes = FilePickerFileType.Images });
+            else if (escolha == "Câmera" && MediaPicker.Default.IsCaptureSupported)
+                result = await MediaPicker.Default.CapturePhotoAsync();
+
             if (result != null)
             {
                 using var stream = await result.OpenReadAsync();
@@ -276,9 +258,6 @@ public partial class MatriculaViewModel : BaseViewModel
                 OnPropertyChanged(nameof(Matricula));
             }
         }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Erro", $"Erro ao selecionar imagem: {ex.Message}", "OK");
-        }
+        catch (Exception ex) { await Shell.Current.DisplayAlert("Erro", ex.Message, "OK"); }
     }
 }

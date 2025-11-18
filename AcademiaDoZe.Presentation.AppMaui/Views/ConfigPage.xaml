@@ -13,7 +13,7 @@ Title="Configura��es">
                     <Label Text="Tema" Style="{StaticResource SubHeadline}"/>
                     <StackLayout Spacing="5">
                         <Label Text="Tema" />
-                        <Picker x:Name="TemaPicker" SelectedIndexChanged="OnSalvarTemaClicked">
+                        <Picker x:Name="TemaPicker">
                             <Picker.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>light</x:String>
