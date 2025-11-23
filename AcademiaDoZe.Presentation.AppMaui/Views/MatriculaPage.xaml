@@ -81,25 +81,25 @@
                 </Border>
             </StackLayout>
 
-            <StackLayout>
-                <Label Text="Restrições Médicas" FontSize="16" FontAttributes="Bold" Margin="0,10"/>
-                
-                <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10">
-                    <StackLayout BindableLayout.ItemsSource="{Binding ListaRestricoes}" Spacing="10">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <HorizontalStackLayout Spacing="10">
-                                    <CheckBox IsChecked="{Binding IsSelected}" Color="{StaticResource Primary}" />
-                                    
-                                    <Label Text="{Binding Nome}" 
-                                           VerticalOptions="Center" 
+			<StackLayout>
+				<Label Text="Restrições Médicas" FontSize="16" FontAttributes="Bold" Margin="0,10"/>
+
+				<Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10">
+					<StackLayout BindableLayout.ItemsSource="{Binding ListaRestricoes}" Spacing="10">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="vm:RestricaoItem">
+								<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+									<CheckBox IsChecked="{Binding IsSelected}" Color="{StaticResource Primary}" />
+
+									<Label Text="{Binding Nome}"
+                                           VerticalOptions="Center"
                                            TextColor="{AppThemeBinding Light=Black, Dark=White}" />
-                                </HorizontalStackLayout>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                </Border>
-            </StackLayout>
+								</HorizontalStackLayout>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</StackLayout>
+				</Border>
+			</StackLayout>
 
             <StackLayout>
                 <Label Text="Observações" FontSize="12" TextColor="Gray" Margin="2,0"/>
