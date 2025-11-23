@@ -63,10 +63,61 @@ public partial class MatriculaViewModel : BaseViewModel
         RestricoesMedicas = EAppMatriculaRestricoes.None,
         ObservacoesRestricoes = string.Empty
     };
+
     public MatriculaDTO Matricula
     {
         get => _matricula;
-        set => SetProperty(ref _matricula, value);
+        set
+        {
+            if (SetProperty(ref _matricula, value))
+            {
+                OnPropertyChanged(nameof(PlanoSelecionado));
+                OnPropertyChanged(nameof(DataInicioSelecionada));
+            }
+        }
+    }
+
+    public EAppMatriculaPlano PlanoSelecionado
+    {
+        get => Matricula.Plano;
+        set
+        {
+            if (Matricula.Plano != value)
+            {
+                Matricula.Plano = value;
+                OnPropertyChanged();
+                CalcularDataFim();
+            }
+        }
+    }
+
+    public DateOnly DataInicioSelecionada
+    {
+        get => Matricula.DataInicio;
+        set
+        {
+            if (Matricula.DataInicio != value)
+            {
+                Matricula.DataInicio = value;
+                OnPropertyChanged();
+                CalcularDataFim();
+            }
+        }
+    }
+
+    private void CalcularDataFim()
+    {
+        int mesesParaAdicionar = Matricula.Plano switch
+        {
+            EAppMatriculaPlano.Mensal => 1,
+            EAppMatriculaPlano.Trimestral => 3,
+            EAppMatriculaPlano.Semestral => 6,
+            EAppMatriculaPlano.Anual => 12,
+            _ => 1
+        };
+
+        Matricula.DataFim = Matricula.DataInicio.AddMonths(mesesParaAdicionar);
+        OnPropertyChanged(nameof(Matricula));
     }
 
     private bool _isEditMode;
@@ -122,6 +173,8 @@ public partial class MatriculaViewModel : BaseViewModel
         AlunoEncontrado = false;
         SearchTextAluno = string.Empty;
         PreencherListaRestricoes(EAppMatriculaRestricoes.None);
+        OnPropertyChanged(nameof(PlanoSelecionado));
+        OnPropertyChanged(nameof(DataInicioSelecionada));
     }
 
     private void PreencherListaRestricoes(EAppMatriculaRestricoes restricoesAtuais)
@@ -156,7 +209,6 @@ public partial class MatriculaViewModel : BaseViewModel
                 Matricula = matriculaData;
                 AlunoEncontrado = true;
                 SearchTextAluno = matriculaData.AlunoMatricula.Cpf;
-
                 PreencherListaRestricoes(Matricula.RestricoesMedicas);
             }
         }
@@ -215,21 +267,64 @@ public partial class MatriculaViewModel : BaseViewModel
 
         if (!AlunoEncontrado || Matricula.AlunoMatricula.Id == 0)
         {
-            await Shell.Current.DisplayAlert("Validação", "Selecione um aluno.", "OK"); return;
+            await Shell.Current.DisplayAlert("Validação", "Selecione um aluno válido.", "OK"); return;
+        }
+        if (string.IsNullOrWhiteSpace(Matricula.Objetivo))
+        {
+            await Shell.Current.DisplayAlert("Validação", "O campo Objetivo é obrigatório.", "OK"); return;
+        }
+        if (Matricula.DataFim <= Matricula.DataInicio)
+        {
+            await Shell.Current.DisplayAlert("Validação", "A Data Fim deve ser maior que a Data Início.", "OK"); return;
         }
 
         try
         {
             IsBusy = true;
+
+            if (!IsEditMode)
+            {
+                var matriculasAtivas = await _matriculaService.ObterAtivasAsync(Matricula.AlunoMatricula.Id);
+                if (matriculasAtivas.Any())
+                {
+                    await Shell.Current.DisplayAlert("Validação", "Este aluno já possui uma matrícula ativa.", "OK");
+                    IsBusy = false;
+                    return;
+                }
+            }
+
+            var hoje = DateTime.Today;
+            var idade = hoje.Year - Matricula.AlunoMatricula.DataNascimento.Year;
+            if (Matricula.AlunoMatricula.DataNascimento.ToDateTime(TimeOnly.MinValue) > hoje.AddYears(-idade))
+            {
+                idade--;
+            }
+
+            bool laudoObrigatorioIdade = (idade >= 12 && idade <= 16);
+            bool laudoObrigatorioRestricao = (Matricula.RestricoesMedicas != EAppMatriculaRestricoes.None);
+            bool laudoFoiEnviado = (Matricula.LaudoMedico?.Conteudo != null && Matricula.LaudoMedico.Conteudo.Length > 0);
+
+            if ((laudoObrigatorioIdade || laudoObrigatorioRestricao) && !laudoFoiEnviado)
+            {
+                string motivo = "";
+                if (laudoObrigatorioIdade) motivo = $"o aluno tem {idade} anos";
+                if (laudoObrigatorioRestricao) motivo = "foram selecionadas restrições médicas";
+                if (laudoObrigatorioIdade && laudoObrigatorioRestricao) motivo = $"o aluno tem {idade} anos E foram selecionadas restrições médicas";
+
+                await Shell.Current.DisplayAlert("Laudo Obrigatório", $"É obrigatório anexar um laudo médico porque {motivo}.", "OK");
+                IsBusy = false;
+                return;
+            }
+
             if (IsEditMode)
             {
                 await _matriculaService.AtualizarAsync(Matricula);
-                await Shell.Current.DisplayAlert("Sucesso", "Atualizado!", "OK");
+                await Shell.Current.DisplayAlert("Sucesso", "Matrícula atualizada com sucesso.", "OK");
             }
             else
             {
                 await _matriculaService.AdicionarAsync(Matricula);
-                await Shell.Current.DisplayAlert("Sucesso", "Criado!", "OK");
+                await Shell.Current.DisplayAlert("Sucesso", "Matrícula criada com sucesso.", "OK");
             }
             await Shell.Current.GoToAsync("..");
         }

@@ -7,79 +7,87 @@
              x:DataType="vm:MatriculaViewModel"
              Title="{Binding Title}">
 
-    <ContentPage.Resources>
-        <converters:FotoToImageSourceConverter x:Key="FotoToImageSourceConverter" />
-        <converters:DateOnlyToDateTimeConverter x:Key="DateOnlyConverter" />
-        <converters:EnumDisplayConverter x:Key="EnumDisplay" />
-        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
-    </ContentPage.Resources>
+	<ContentPage.Resources>
+		<converters:FotoToImageSourceConverter x:Key="FotoToImageSourceConverter" />
+		<converters:DateOnlyToDateTimeConverter x:Key="DateOnlyConverter" />
+		<converters:EnumDisplayConverter x:Key="EnumDisplay" />
+		<converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+	</ContentPage.Resources>
 
-    <ScrollView>
-        <StackLayout Spacing="20" Padding="15">
+	<ScrollView>
+		<StackLayout Spacing="20" Padding="15">
 
-            <Label Text="{Binding Title}" Style="{StaticResource Headline}" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" />
+			<Label Text="{Binding Title}" Style="{StaticResource Headline}" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" />
 
-            <Border StrokeShape="RoundRectangle 15" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="15">
-                <StackLayout Spacing="15">
-                    
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}">
-                            <Entry Text="{Binding SearchTextAluno}" Placeholder="CPF do Aluno" Keyboard="Numeric" VerticalOptions="Center" Margin="5,0"/>
-                        
-                        <Button Grid.Column="1" Command="{Binding SearchAlunoPorCpfCommand}" 
-                                BackgroundColor="{StaticResource Primary}" CornerRadius="10" 
+			<Border StrokeShape="RoundRectangle 15" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="15">
+				<StackLayout Spacing="15">
+
+					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}">
+							<Entry Text="{Binding SearchTextAluno}"
+                                   Placeholder="CPF do Aluno"
+                                   Keyboard="Numeric"
+                                   VerticalOptions="Center"
+                                   Margin="5,0"
+                                   BackgroundColor="Transparent"/>
+
+						<Button Grid.Column="1" Command="{Binding SearchAlunoPorCpfCommand}"
+                                BackgroundColor="{StaticResource Primary}" CornerRadius="10"
                                 HeightRequest="50" WidthRequest="50" Padding="0">
-                            <Button.ImageSource>
-                                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Color="White" Size="28"/>
-                            </Button.ImageSource>
-                        </Button>
-                    </Grid>
+							<Button.ImageSource>
+								<FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Color="White" Size="28"/>
+							</Button.ImageSource>
+						</Button>
+					</Grid>
 
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15" IsVisible="{Binding AlunoEncontrado}">
-                        <Border StrokeShape="RoundRectangle 40" HeightRequest="80" WidthRequest="80" StrokeThickness="2" Stroke="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center">
-                            <Image Source="{Binding Matricula.AlunoMatricula.Foto, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" />
-                        </Border>
-                        
-                        <StackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                            <Label Text="{Binding Matricula.AlunoMatricula.Nome}" FontAttributes="Bold" FontSize="18" />
-                            <Label Text="{Binding Matricula.AlunoMatricula.Cpf}" TextColor="Gray" />
-                        </StackLayout>
-                    </Grid>
-                </StackLayout>
-            </Border>
+					<Grid ColumnDefinitions="Auto,*" ColumnSpacing="15" IsVisible="{Binding AlunoEncontrado}">
+						<Border StrokeShape="RoundRectangle 40" HeightRequest="80" WidthRequest="80" StrokeThickness="2" Stroke="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center">
+							<Image Source="{Binding Matricula.AlunoMatricula.Foto, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" />
+						</Border>
 
-            <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,*" RowSpacing="15" ColumnSpacing="10">
-                <StackLayout Grid.ColumnSpan="3">
-                    <Label Text="Plano" FontSize="12" TextColor="Gray" Margin="2,0"/>
-                    <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="0">
-                        <Picker ItemsSource="{Binding MatriculaPlanos}" SelectedItem="{Binding Matricula.Plano}" Title="Selecione o Plano">
-                            <Picker.ItemDisplayBinding>
-                                <Binding Converter="{StaticResource EnumDisplay}" />
-                            </Picker.ItemDisplayBinding>
-                        </Picker>
-                    </Border>
-                </StackLayout>
+						<StackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+							<Label Text="{Binding Matricula.AlunoMatricula.Nome}" FontAttributes="Bold" FontSize="18" />
+							<Label Text="{Binding Matricula.AlunoMatricula.Cpf}" TextColor="Gray" />
+						</StackLayout>
+					</Grid>
+				</StackLayout>
+			</Border>
 
-                <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                    <Label Text="Início" FontSize="12" TextColor="Gray" Margin="2,0"/>
-                    <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10,0">
-                        <DatePicker Date="{Binding Matricula.DataInicio, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay}" />
-                    </Border>
-                </StackLayout>
+			<Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,*" RowSpacing="15" ColumnSpacing="10">
 
-                <StackLayout Grid.Row="1" Grid.Column="2">
-                    <Label Text="Fim" FontSize="12" TextColor="Gray" Margin="2,0"/>
-                    <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10,0">
-                        <DatePicker Date="{Binding Matricula.DataFim, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay}" />
-                    </Border>
-                </StackLayout>
-            </Grid>
+				<StackLayout Grid.ColumnSpan="3">
+					<Label Text="Plano" FontSize="12" TextColor="Gray" Margin="2,0"/>
+					<Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="0">
+						<Picker ItemsSource="{Binding MatriculaPlanos}"
+                                SelectedItem="{Binding PlanoSelecionado}"
+                                Title="Selecione o Plano">
+							<Picker.ItemDisplayBinding>
+								<Binding Converter="{StaticResource EnumDisplay}" />
+							</Picker.ItemDisplayBinding>
+						</Picker>
+					</Border>
+				</StackLayout>
 
-            <StackLayout>
-                <Label Text="Objetivo" FontSize="12" TextColor="Gray" Margin="2,0"/>
-                <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10,0">
-                    <Entry Text="{Binding Matricula.Objetivo}" Placeholder="Ex: Hipertrofia, Saúde..." />
-                </Border>
-            </StackLayout>
+				<StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+					<Label Text="Início" FontSize="12" TextColor="Gray" Margin="2,0"/>
+					<Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10,0">
+						<DatePicker Date="{Binding DataInicioSelecionada, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay}" />
+					</Border>
+				</StackLayout>
+
+				<StackLayout Grid.Row="1" Grid.Column="2">
+					<Label Text="Fim" FontSize="12" TextColor="Gray" Margin="2,0"/>
+					<Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10,0">
+						<DatePicker Date="{Binding Matricula.DataFim, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay}" />
+					</Border>
+				</StackLayout>
+			</Grid>
+
+			<StackLayout>
+				<Label Text="Objetivo" FontSize="12" TextColor="Gray" Margin="2,0"/>
+				<Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10,0">
+					<Entry Text="{Binding Matricula.Objetivo}" Placeholder="Ex: Hipertrofia, Saúde..." />
+				</Border>
+			</StackLayout>
 
 			<StackLayout>
 				<Label Text="Restrições Médicas" FontSize="16" FontAttributes="Bold" Margin="0,10"/>
@@ -101,39 +109,39 @@
 				</Border>
 			</StackLayout>
 
-            <StackLayout>
-                <Label Text="Observações" FontSize="12" TextColor="Gray" Margin="2,0"/>
-                <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10">
-                    <Editor Text="{Binding Matricula.ObservacoesRestricoes}" Placeholder="Digite as observações..." AutoSize="TextChanges" />
-                </Border>
-            </StackLayout>
+			<StackLayout>
+				<Label Text="Observações" FontSize="12" TextColor="Gray" Margin="2,0"/>
+				<Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" Padding="10">
+					<Editor Text="{Binding Matricula.ObservacoesRestricoes}" Placeholder="Digite as observações..." AutoSize="TextChanges" />
+				</Border>
+			</StackLayout>
 
-            <StackLayout>
-                <Label Text="Laudo Médico" FontSize="16" FontAttributes="Bold" Margin="0,10"/>
-                <Grid ColumnDefinitions="Auto,*">
-                    <Border StrokeShape="RoundRectangle 10" HeightRequest="80" WidthRequest="80" Margin="0,0,15,0" StrokeThickness="1" Stroke="Gray">
-                        <Image Source="{Binding Matricula.LaudoMedico, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" />
-                    </Border>
-                    
-                    <Button Grid.Column="1" Text="Selecionar Imagem" Command="{Binding SelecionarLaudoCommand}" 
+			<StackLayout>
+				<Label Text="Laudo Médico" FontSize="16" FontAttributes="Bold" Margin="0,10"/>
+				<Grid ColumnDefinitions="Auto,*">
+					<Border StrokeShape="RoundRectangle 10" HeightRequest="80" WidthRequest="80" Margin="0,0,15,0" StrokeThickness="1" Stroke="Gray">
+						<Image Source="{Binding Matricula.LaudoMedico, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" />
+					</Border>
+
+					<Button Grid.Column="1" Text="Selecionar Imagem" Command="{Binding SelecionarLaudoCommand}"
                             BackgroundColor="{StaticResource Secondary}" TextColor="Black" CornerRadius="20" VerticalOptions="Center">
-                        <Button.ImageSource>
-                            <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe226;" Color="Black"/>
-                        </Button.ImageSource>
-                    </Button>
-                </Grid>
-            </StackLayout>
+						<Button.ImageSource>
+							<FontImageSource FontFamily="MaterialIcons" Glyph="&#xe226;" Color="Black"/>
+						</Button.ImageSource>
+					</Button>
+				</Grid>
+			</StackLayout>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20">
-                <Button Grid.Column="0" Text="Cancelar" Command="{Binding CancelCommand}" 
+			<Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20">
+				<Button Grid.Column="0" Text="Cancelar" Command="{Binding CancelCommand}"
                         BackgroundColor="Transparent" BorderColor="Gray" BorderWidth="1" TextColor="Gray" CornerRadius="20" HeightRequest="50"/>
-                
-                <Button Grid.Column="1" Text="Salvar" Command="{Binding SaveMatriculaCommand}" 
+
+				<Button Grid.Column="1" Text="Salvar" Command="{Binding SaveMatriculaCommand}"
                         BackgroundColor="{StaticResource Primary}" CornerRadius="20" HeightRequest="50"/>
-            </Grid>
+			</Grid>
 
-            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" HorizontalOptions="Center" Color="{StaticResource Primary}"/>
+			<ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" HorizontalOptions="Center" Color="{StaticResource Primary}"/>
 
-        </StackLayout>
-    </ScrollView>
+		</StackLayout>
+	</ScrollView>
 </ContentPage>
