@@ -23,9 +23,7 @@
                 <StackLayout Spacing="15">
                     
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}">
-                        <Border Grid.Column="0" StrokeShape="RoundRectangle 10" StrokeThickness="1" Stroke="{StaticResource Primary}" BackgroundColor="Transparent" Padding="5,0">
                             <Entry Text="{Binding SearchTextAluno}" Placeholder="CPF do Aluno" Keyboard="Numeric" VerticalOptions="Center" Margin="5,0"/>
-                        </Border>
                         
                         <Button Grid.Column="1" Command="{Binding SearchAlunoPorCpfCommand}" 
                                 BackgroundColor="{StaticResource Primary}" CornerRadius="10" 

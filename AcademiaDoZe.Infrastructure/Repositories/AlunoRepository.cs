@@ -19,11 +19,11 @@ namespace AcademiaDoZe.Infrastructure.Repositories
                 await using var connection = await GetOpenConnectionAsync();
 
                 string query = _databaseType == DatabaseType.SqlServer
-                    ? $"INSERT INTO {TableName} (cpf, telefone, nome, nascimento, email, logradouro_id, numero, complemento, senha) "
+                    ? $"INSERT INTO {TableName} (cpf, telefone, nome, nascimento, email, logradouro_id, numero, complemento, senha, foto) "
                       + "OUTPUT INSERTED.id_aluno "
-                      + "VALUES (@Cpf, @Telefone, @Nome, @Nascimento, @Email, @LogradouroId, @Numero, @Complemento, @Senha);"
-                    : $"INSERT INTO {TableName} (cpf, telefone, nome, nascimento, email, logradouro_id, numero, complemento, senha) "
-                      + "VALUES (@Cpf, @Telefone, @Nome, @Nascimento, @Email, @LogradouroId, @Numero, @Complemento, @Senha); "
+                      + "VALUES (@Cpf, @Telefone, @Nome, @Nascimento, @Email, @LogradouroId, @Numero, @Complemento, @Senha, @Foto);"
+                    : $"INSERT INTO {TableName} (cpf, telefone, nome, nascimento, email, logradouro_id, numero, complemento, senha, foto) "
+                      + "VALUES (@Cpf, @Telefone, @Nome, @Nascimento, @Email, @LogradouroId, @Numero, @Complemento, @Senha, @Foto); "
                       + "SELECT LAST_INSERT_ID();";
 
                 await using var command = DbProvider.CreateCommand(query, connection);
@@ -37,6 +37,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
                 command.Parameters.Add(DbProvider.CreateParameter("@Numero", entity.Numero, DbType.String, _databaseType));
                 command.Parameters.Add(DbProvider.CreateParameter("@Complemento", (object)entity.Complemento ?? DBNull.Value, DbType.String, _databaseType));
                 command.Parameters.Add(DbProvider.CreateParameter("@Senha", entity.Senha, DbType.String, _databaseType));
+                command.Parameters.Add(DbProvider.CreateParameter("@Foto", (object)entity.Foto?.Conteudo ?? DBNull.Value, DbType.Binary, _databaseType));
 
                 var id = await command.ExecuteScalarAsync();
 
@@ -69,7 +70,8 @@ namespace AcademiaDoZe.Infrastructure.Repositories
                                "logradouro_id = @LogradouroId, " +
                                "numero = @Numero, " +
                                "complemento = @Complemento, " +
-                               "senha = @Senha " +
+                               "senha = @Senha, " +
+                               "foto = @Foto " + 
                                "WHERE id_aluno = @Id;";
 
                 await using var command = DbProvider.CreateCommand(query, connection);
@@ -84,6 +86,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
                 command.Parameters.Add(DbProvider.CreateParameter("@Numero", entity.Numero, DbType.String, _databaseType));
                 command.Parameters.Add(DbProvider.CreateParameter("@Complemento", (object)entity.Complemento ?? DBNull.Value, DbType.String, _databaseType));
                 command.Parameters.Add(DbProvider.CreateParameter("@Senha", entity.Senha, DbType.String, _databaseType));
+                command.Parameters.Add(DbProvider.CreateParameter("@Foto", (object)entity.Foto?.Conteudo ?? DBNull.Value, DbType.Binary, _databaseType));
 
                 await command.ExecuteNonQueryAsync();
 
@@ -179,7 +182,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
                     numero: reader["numero"].ToString()!,
                     complemento: reader["complemento"]?.ToString()!,
                     senha: reader["senha"].ToString()!,
-                    foto: reader["foto"] is DBNull ? null : Arquivo.Criar((byte[])reader["foto"], "jpg") // Adicionar se Aluno tiver foto
+                    foto: reader["foto"] is DBNull ? null : Arquivo.Criar((byte[])reader["foto"], "jpg")
                 );
 
                 var idProperty = typeof(Entity).GetProperty("Id");
